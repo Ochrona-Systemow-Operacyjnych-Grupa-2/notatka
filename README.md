@@ -5,7 +5,13 @@ Można traktować jak dokumentacje</p>
 ## Ogólne założenia
 Projekt obejmuje aplikację do wysyłania wiadomości, zakłada server i klient, w komunikacji jeden do wielu. Protokół komunikacji sieciowej to TCP. Generalne szyfrowanie wiadomości odbywa się za pomocą algorytmów klucza publicznego i AES (dla zapewnienia większej długosći wiadomości). Więcej informacji o tym w sekcji [komunikacji z serwerem](#przesyłanie-wiadomości) i sekcji o [strókturze wiadomości](#message).  
 
-## Opis komunikacji klienta z serverem
+### Server 
+Server odpowiada tylko i wyłacznie za przekazywanie wiadomości między urzytkownikami i nie ma wglądu do treści wiadomości.
+
+### Klient
+Wiadomości między urzytkownikami są szyfrowane. Dzięki wykorzystaniu algorytmów klucza publicznego, urzytkownicy do logowania wymagają tylko swojej nazwy i pary kluczy które są przechowywane na urządzeniu. W obecnym momencie nie jest przewidziane automatyczne urzytkowanie kluczy na wielu urządzeniach równocześnie.
+
+## Opis teoretyczny komunikacji klienta z serverem
 Wszystkie zapytania do servera będą przesyłane za pomcą Jsonów.
 
 ### Rejestracja
@@ -123,7 +129,7 @@ baza danych zawierająca wiadomości
 - name - nazwa użytkownika.
 - pub - klucz publiczny z pary RSA użytkownika.
 
-## niezmieniona oryginalna wersja (dodane tylko newliny)
+## niezmieniona oryginalna wersja (dodane tylko akapity)
   User i Serwer, każdy user musi się zarejestrować, rejestracja opisana na początku, User generuje sobie RSA (klucz publiczny i prywatny) wysyła na serwer publiczne RSA + nazwa użytkownika i serwer to zapisuje. Serwer sprawdza czy nazwa użytkownika jest zajęta, jeśli jest zajęta to wysyła do użytkownika, że rejestracja się nie powiodła, jeżeli się powiodła to wysyła informację zwrotną do użytkownika i użytkownik wie że istnieje w bazie.
 
   Nowy użytkownik musi się zalogować, żeby utwiorzyć sesję z której będzie korzystał, użytkownik wysyła do serwera request, żeby się zalogować, następnie serwer odsyła do użytkownika jego kluczem publicznym zaszyfrowany token w RSA i użytkownik odsyła do serwera token zaszyfrowany swoim kluczem prywatnym. Serwer sprawdza czy token jest taki sam, jeśli wszystko się zgadza serwer wysyła potwierdzenie, że jest logowanie. Jeśli jesteśmy zalogowani trafiamy do cache, z naszym tokenem i socketem.
