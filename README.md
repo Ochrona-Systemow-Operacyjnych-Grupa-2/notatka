@@ -1,1 +1,84 @@
-# notatka
+# Opis projektu
+<p>Notatka z lekcji poprawiona w .md + uściślenie niekótrych kwestii. <br>
+Można traktować jak dokumentacje</p>
+
+## Ogólne założenia
+Projekt obejmuje aplikację do wysyłania wiadomości, zakłada server i klient, w komunikacji jeden do wielu. Protokół komunikacji sieciowej to TCP. Generalne szyfrowanie wiadomości odbywa się za pomocą RSA i AES (dla zapewnienia większej długosći wiadomości).
+
+## Opis komunikacji server 
+Wszystkie zapytania do servera będą przesyłane za pomcą Jsonów.
+
+### Rejestracja
+Proces utworzenia nowego użytkownika i dodania go do bazy danych użytkowników na serverze.
+
+#### Użytkownik
+User generuje sobie parę RSA (klucz publiczny i prywatny) wysyła na serwer publiczne RSA + nazwa użytkownika i serwer to zapisuje. Następnie wysyła zapytanie do Servera ze swoim username + kluczem i oczekuje odpowiedzi.
+#### Server
+Serwer sprawdza czy nazwa użytkownika jest zajęta, jeśli jest zajęta to wysyła do użytkownika, że rejestracja się nie powiodła, jeżeli nie jest zajęta wysyła info zwrotne że się powiodła. 
+
+**Użytkownik po rejestracji nie jest zalogowany.**
+
+### Logowanie
+Proces uwierzytelnienia sesji użytkownika i zmiana jego stanu na online.
+#### Użytkownik
+Użytkownik wysyła do serwera request, z prośbą o logowanie (+ swój username). Oczekuje na odpowiedź serwera. Dostaje token zaszyfrowany swoim Publicznym RSA. Rozszyfrowywuje go i szyfruje ponownie, swoim kluczem prywatym i odsyła do serwera. Czeka na autoryzacje.
+
+#### Server
+Server odbiera request logowania. Generuje token (losowe znaki) i szyfruje kluczem RSA publicznym użytkownika, i wysyła do użytkownika. Oczekuje odpowiedzi. Po dostaniu odpowiedzi, rozszyfrowywuje ją za pomocą klucza publicznego RSA użytkownika. Sprawdza czy tokeny się zgadzają. Odsyła informację zwrotną do użytkownika, czy logowanie się powiodło.
+
+### Wylogowanie
+Proces zmiany stanu użytkownika na offline i anulowanie połączenia.
+#### Użytkownik
+Użytkownik wysyła request wylogowania się.
+#### Server
+Server odbiera request wylogowania się od użytkownika, zmienia jego stan na offline.
+
+### Przesyłanie wiadomości
+Treść wiadomości wysłanej przez użytkownika, będzie zaszyfrowana algorytmem AES, który będzie zaszyfrowany RSA, żeby pozwolić na większą długość wiadomość.
+#### Użytkownik
+#### Server
+[TODO]
+
+### Synchronizacja wiadomości
+[TODO]
+
+
+## Struktura baz danych na serverze
+bazy danych dotyczą przechowywania informacji o użytkownikach i wysłanych wiadomościach
+### historia wiadomości
+baza danych zawierająca wiadomości 
+
+| msg_history | 
+| :---------: |
+| id |
+| timestamp |
+| from |
+| to |
+| msg |
+| aes |
+
+- id - id w bazie danych
+- timestamp - data + godzina odebrania przez serwer wiadomośći
+- from - nadawca wiadomości
+- to - odbiorca/y wiadomości
+- msg - zaszyfrowana treść wiadomości (za pomocą AES)
+- aes - klucz AES do wiadmości zaszyfrowany przez RSA
+
+### użytkownicy
+baza danych zawierająca wiadomości 
+| users | 
+| :---------: |
+| name | 
+| pub | 
+
+- name - nazwa użytkownika.
+- pub - klucz publiczny z pary RSA użytkownika.
+
+## niezmieniona oryginalna wersja (dodane tylko newliny)
+  User i Serwer, każdy user musi się zarejestrować, rejestracja opisana na początku, User generuje sobie RSA (klucz publiczny i prywatny) wysyła na serwer publiczne RSA + nazwa użytkownika i serwer to zapisuje. Serwer sprawdza czy nazwa użytkownika jest zajęta, jeśli jest zajęta to wysyła do użytkownika, że rejestracja się nie powiodła, jeżeli się powiodła to wysyła informację zwrotną do użytkownika i użytkownik wie że istnieje w bazie.
+
+  Nowy użytkownik musi się zalogować, żeby utwiorzyć sesję z której będzie korzystał, użytkownik wysyła do serwera request, żeby się zalogować, następnie serwer odsyła do użytkownika jego kluczem publicznym zaszyfrowany token w RSA i użytkownik odsyła do serwera token zaszyfrowany swoim kluczem prywatnym. Serwer sprawdza czy token jest taki sam, jeśli wszystko się zgadza serwer wysyła potwierdzenie, że jest logowanie. Jeśli jesteśmy zalogowani trafiamy do cache, z naszym tokenem i socketem.
+
+  Wysyłanie wiadomości odbywa się w taki sposób, że klient tworzy JSON (from, to, wiadomość zaszyfrowana AESEM, timestamp wiadomości, losowy AES zaszyfrowany RSA publicznym odbiorcy). Przed wysłaniem wiadomości prosimy o klucz publiczny odbiorcy (użytkownika z pola to: ). Serwer sprawdza czy user jest online, jeśli jest to wysyła mu dalej tą wiadomość, w formacie w jakim dostał od użytkownika i zapisuje ta wiadomość w bazie danych. User2 odbiera wiadomość i widzi, że to jest do niego, bierze swój prywatny klucz rozszyfrowuje AES, i rozszyfrowuje wiadomość.
+  
+  Logout to User wysyła flagę do serwera (wylogowywuje się), serwer usuwa cię z Cache przy wylogowaniu. SYNC – user wysyła request do serwera o synchronizację wiadomości, które są do niego (od kiedy do kiedy, user token,) Serwer zwraca MSG history, które spełniają te wartości wysłane przez usera.
