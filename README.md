@@ -3,9 +3,9 @@
 Można traktować jak dokumentacje</p>
 
 ## Ogólne założenia
-Projekt obejmuje aplikację do wysyłania wiadomości, zakłada server i klient, w komunikacji jeden do wielu. Protokół komunikacji sieciowej to TCP. Generalne szyfrowanie wiadomości odbywa się za pomocą RSA i AES (dla zapewnienia większej długosći wiadomości).
+Projekt obejmuje aplikację do wysyłania wiadomości, zakłada server i klient, w komunikacji jeden do wielu. Protokół komunikacji sieciowej to TCP. Generalne szyfrowanie wiadomości odbywa się za pomocą algorytmów klucza publicznego i AES (dla zapewnienia większej długosći wiadomości). Więcej informacji o tym w sekcji [komunikacji z serwerem](#przesyłanie-wiadomości) i sekcji o [strókturze wiadomości](#message).  
 
-## Opis komunikacji server 
+## Opis komunikacji klienta z serverem
 Wszystkie zapytania do servera będą przesyłane za pomcą Jsonów.
 
 ### Rejestracja
@@ -34,7 +34,7 @@ Użytkownik wysyła request wylogowania się.
 Server odbiera request wylogowania się od użytkownika, zmienia jego stan na offline.
 
 ### Przesyłanie wiadomości
-Treść wiadomości wysłanej przez użytkownika, będzie zaszyfrowana algorytmem AES, który będzie zaszyfrowany RSA, żeby pozwolić na większą długość wiadomość.
+Treść wiadomości wysłanej przez użytkownika, będzie zaszyfrowana algorytmem AES, który będzie zaszyfrowany kluczem publicznym nadawcy i odbiorcy/ów, żeby pozwolić na większą długość wiadomość.
 #### Użytkownik
 #### Server
 [TODO]
@@ -42,13 +42,62 @@ Treść wiadomości wysłanej przez użytkownika, będzie zaszyfrowana algorytme
 ### Synchronizacja wiadomości
 [TODO]
 
+## Struktura zapytań do servera json
+Jak wygląda struktura zapytań do servera.<br>
+Generalną zasadą jest to, że cała komunikacja przesyłana pomiędzy klientem a serverem powinna być wykonywana za pomocą zapytań json. Każde z zapytań ma taki sam szkielet,
+składający się z pól: timestamp (zawierającego DateTime w standardzie ISO 8601),
+command (zawierającego nazwę komendy),
+oraz payload (które różne pola w zależności od urzytej komendy). <br>
+```
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "command": "some_command",
+  "payload": {
+    ...
+  }
+}
+```
+### register
+[TODO]
+
+### login
+[TODO]
+
+### logout
+```
+{
+  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "command": "logout",
+  "payload": {}
+}
+```
+### message
+```
+{
+  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "command": "message",
+  "payload": {
+    "from": "cool user",
+    "to": ["another cool user"],
+    "aes": "this-is-deafineyly-encryptet-with-RSA-or-simmilar",
+    "msg_cont": "this-is-defeinetly-encrypted-with-above-aes"
+  }
+}
+```
+
+Stróktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
+- from - od którego urzytkownika idzie wiadomość. string
+- to - do którego urzytkownika/ów idzie wiadomość. tablica urzytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
+- aes - zaszyfrowany kluczem publiczym klucz do AES. string
+- msg_cont - pole z treścią wiadomości zaszyfrowaną kluczem do AES. string
+
 
 ## Struktura baz danych na serverze
 bazy danych dotyczą przechowywania informacji o użytkownikach i wysłanych wiadomościach
 ### historia wiadomości
 baza danych zawierająca wiadomości 
 
-| msg_history | 
+| msg_history |
 | :---------: |
 | id |
 | timestamp |
