@@ -137,7 +137,7 @@ baza danych zawierająca wiadomości
 **NOTATKA** - przemyśleć czy w timestampie powinno się używać daty wysłania wiadomości czy odebrania.
 
 ### użytkownicy
-baza danych zawierająca wiadomości 
+baza danych zawierająca informacje o użytkownikach
 | users | 
 | :---------: |
 | name | 
