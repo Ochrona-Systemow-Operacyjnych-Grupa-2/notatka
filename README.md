@@ -6,10 +6,13 @@ Można traktować jak dokumentacje</p>
 Projekt obejmuje aplikację do wysyłania wiadomości, zakłada server i klient, w komunikacji jeden do wielu. Protokół komunikacji sieciowej to TCP. Generalne szyfrowanie wiadomości odbywa się za pomocą algorytmów klucza publicznego i AES (dla zapewnienia większej długosći wiadomości). Więcej informacji o tym w sekcji [komunikacji z serwerem](#przesyłanie-wiadomości) i sekcji o [strókturze wiadomości](#message).  
 
 ### Server 
-Server odpowiada tylko i wyłacznie za przekazywanie wiadomości między urzytkownikami i nie ma wglądu do treści wiadomości.
+Server odpowiada tylko i wyłacznie za przekazywanie wiadomości między urzytkownikami i nie ma wglądu do treści wiadomości. 
+Wiadomości są przechowywane w bazie danych (w formie zaszyfrowanej). Server posiada takrzę baze danychz listą urzytkowników oraz ich kluczami publicznymi. Klucze prywatne pozostają prywatne.
+Server podczas działania przechowuje także w cashu listę aktywnie zalogowanych użytkowników. Lista ta zawiera dokładniej nazwę użytkownika, token sesji i socket.
 
 ### Klient
-Wiadomości między urzytkownikami są szyfrowane. Dzięki wykorzystaniu algorytmów klucza publicznego, urzytkownicy do logowania wymagają tylko swojej nazwy i pary kluczy które są przechowywane na urządzeniu. W obecnym momencie nie jest przewidziane automatyczne urzytkowanie kluczy na wielu urządzeniach równocześnie.
+Wiadomości między urzytkownikami są szyfrowane. Dzięki wykorzystaniu algorytmów klucza publicznego, urzytkownicy do logowania wymagają tylko swojej nazwy i pary kluczy które są przechowywane na urządzeniu. 
+W obecnym momencie nie jest przewidziane automatyczne urzytkowanie kluczy na wielu urządzeniach równocześnie.
 
 ## Opis teoretyczny komunikacji klienta z serverem
 Wszystkie zapytania do servera będą przesyłane za pomcą Jsonów.
