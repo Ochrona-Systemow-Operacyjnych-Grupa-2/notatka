@@ -44,12 +44,24 @@ Server odbiera request wylogowania się od użytkownika, zmienia jego stan na of
 
 ### Przesyłanie wiadomości
 Treść wiadomości wysłanej przez użytkownika, będzie zaszyfrowana algorytmem AES, który będzie zaszyfrowany kluczem publicznym nadawcy i odbiorcy/ów, żeby pozwolić na większą długość wiadomość.
+
+**UWAGA: przy obecnej implementacji nie ma gwarancji tego że osoba wysyłająca zapytanie do servera jest tą osobą za którą się podaje**  
+**jednak przy poprawnej implementacji klienta, próba podszycia się zakończy się co najwyżej wiadomością składającą się ze śmieci.**
+
 #### Użytkownik
+Klucz AES jest generowany przez klienta. Następnie jest nim szyfrowana treść wiadomości. Później klucz AES jest szyfrowany za pomocą klucza publicznego odbiorcy (lub odbiorców). Cała wiadomość jest spakowana w odpowiednią strukturę JSON a następnie przesłana do servera.
+
 #### Server
-[TODO]
+Server po odebraniu wiadomości, zapisuje ją w lokalnej bazie danych, a następnie, przesyła do odbiorcy (lub odbiorców) jesli są aktywni.
 
 ### Synchronizacja wiadomości
-[TODO]
+Proces pobrania wcześniej wysłanych wiadomości.
+
+#### Użytkownik
+Użytkownik requestuje historię, dołączając swój token sesji wiadomości z danego okresu czasu pomiędzy odpowiednimy użytkownikami.
+#### Server
+Server waliduje token, a następnie w przypadku powodzenia odpowiada listą wiadomości.
+
 
 ## Struktura zapytań do servera json
 Jak wygląda struktura zapytań do servera.<br>
@@ -121,6 +133,8 @@ baza danych zawierająca wiadomości
 - to - odbiorca/y wiadomości
 - msg - zaszyfrowana treść wiadomości (za pomocą AES)
 - aes - klucz AES do wiadmości zaszyfrowany przez RSA
+
+**NOTATKA** - przemyśleć czy w timestampie powinno się używać daty wysłania wiadomości czy odebrania.
 
 ### użytkownicy
 baza danych zawierająca wiadomości 
