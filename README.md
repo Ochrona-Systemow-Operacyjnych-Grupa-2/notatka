@@ -69,7 +69,7 @@ Generalną zasadą jest to, że cała komunikacja przesyłana pomiędzy klientem
 składający się z pól: timestamp (zawierającego DateTime w standardzie UTC do ISO 8601, bez mikrosekund),
 command (zawierającego nazwę komendy),
 oraz payload (które różne pola w zależności od użytej komendy). <br>
-```
+```json
 {
   "timestamp": "2025-04-12T16:17:07+02:00",
   "command": "some_command",
@@ -79,13 +79,48 @@ oraz payload (które różne pola w zależności od użytej komendy). <br>
 }
 ```
 ### register
-[TODO]
-
+Uwaga, klient powinienen oczekiwać na potwierdzenie z serwera.
+(czy np. nick już nie jest zajęty)
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "command": "register",
+  "payload": {
+    "name": "some-username",
+    "pub": "user-rsa-public-key"
+  }
+}
+```
 ### login
-[TODO]
+Uwaga, do pełnego zalogowania urzytkownik musi przesłać dwa requesty, request logowania,
+oraz weryfikacje tożsamości.
+
+request logowania:
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "command": "login",
+  "payload": {
+    "name": "some-username"
+  }
+}
+```
+
+weryfikacja tożsamości:
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "command": "login-verif",
+  "payload": {
+    "name": "some-username",
+    "token-sig": "signature-of-token-in-hex"
+  }
+}
+```
+
 
 ### logout
-```
+```json
 {
   "sender_timestamp":"2025-04-12T16:17:07+02:00",
   "command": "logout",
@@ -93,7 +128,7 @@ oraz payload (które różne pola w zależności od użytej komendy). <br>
 }
 ```
 ### message
-```
+```json
 {
   "sender_timestamp":"2025-04-12T16:17:07+02:00",
   "command": "message",
@@ -112,6 +147,9 @@ Struktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu pa
 - aes - zaszyfrowany kluczem publiczym klucz do AES. string
 - msg_cont - pole z treścią wiadomości zaszyfrowaną kluczem do AES. string
 
+## Struktura odpowiedzi servera json
+Struktura odpowiedzi servera na zapytania klienta.
+[TODO]
 
 ## Struktura baz danych na serverze
 bazy danych dotyczą przechowywania informacji o użytkownikach i wysłanych wiadomościach
