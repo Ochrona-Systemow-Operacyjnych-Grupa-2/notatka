@@ -106,7 +106,7 @@ oraz payload (które różne pola w zależności od użytej komendy). <br>
 }
 ```
 
-Stróktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
+Struktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
 - from - od którego użytkownika idzie wiadomość. string
 - to - do którego użytkownika/ów idzie wiadomość. tablica użytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
 - aes - zaszyfrowany kluczem publiczym klucz do AES. string
@@ -122,15 +122,15 @@ baza danych zawierająca wiadomości
 | :---------: |
 | id |
 | timestamp |
-| from |
-| to |
+| sender |
+| receivers |
 | msg |
 | aes |
 
 - id - id w bazie danych
 - timestamp - data + godzina odebrania przez serwer wiadomośći
-- from - nadawca wiadomości
-- to - odbiorca/y wiadomości
+- sender - nadawca wiadomości
+- receivers - odbiorcy wiadomości
 - msg - zaszyfrowana treść wiadomości (za pomocą AES)
 - aes - klucz AES do wiadmości zaszyfrowany przez RSA
 
