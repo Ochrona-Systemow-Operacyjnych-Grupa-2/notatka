@@ -66,9 +66,9 @@ Server waliduje token, a następnie w przypadku powodzenia odpowiada listą wiad
 ## Struktura zapytań do servera json
 Jak wygląda struktura zapytań do servera.<br>
 Generalną zasadą jest to, że cała komunikacja przesyłana pomiędzy klientem a serverem powinna być wykonywana za pomocą zapytań json. Każde z zapytań ma taki sam szkielet,
-składający się z pól: timestamp (zawierającego DateTime w standardzie ISO 8601),
+składający się z pól: timestamp (zawierającego DateTime w standardzie UTC do ISO 8601, bez mikrosekund),
 command (zawierającego nazwę komendy),
-oraz payload (które różne pola w zależności od urzytej komendy). <br>
+oraz payload (które różne pola w zależności od użytej komendy). <br>
 ```
 {
   "timestamp": "2025-04-12T16:17:07+02:00",
@@ -98,17 +98,17 @@ oraz payload (które różne pola w zależności od urzytej komendy). <br>
   "sender_timestamp":"2025-04-12T16:17:07+02:00",
   "command": "message",
   "payload": {
-    "from": "cool user",
-    "to": ["another cool user"],
-    "aes": "this-is-deafineyly-encryptet-with-RSA-or-simmilar",
-    "msg_cont": "this-is-defeinetly-encrypted-with-above-aes"
+    "from": "sender",
+    "to": ["receiver1", "receiver2"],
+    "aes": "aes-encrypted-with-rsa",
+    "msg_cont": "message-encrypted-with-aes"
   }
 }
 ```
 
 Stróktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
-- from - od którego urzytkownika idzie wiadomość. string
-- to - do którego urzytkownika/ów idzie wiadomość. tablica urzytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
+- from - od którego użytkownika idzie wiadomość. string
+- to - do którego użytkownika/ów idzie wiadomość. tablica użytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
 - aes - zaszyfrowany kluczem publiczym klucz do AES. string
 - msg_cont - pole z treścią wiadomości zaszyfrowaną kluczem do AES. string
 
