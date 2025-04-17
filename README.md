@@ -122,7 +122,7 @@ weryfikacja tożsamości:
 ### logout
 ```json
 {
-  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "imestamp":"2025-04-12T16:17:07+02:00",
   "command": "logout",
   "payload": {}
 }
@@ -130,7 +130,7 @@ weryfikacja tożsamości:
 ### message
 ```json
 {
-  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "timestamp":"2025-04-12T16:17:07+02:00",
   "command": "message",
   "payload": {
     "from": "sender",
@@ -145,11 +145,12 @@ Struktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu pa
 - to - do którego użytkownika/ów idzie wiadomość. tablica użytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
 - aes - zaszyfrowany kluczem publiczym klucz do AES. string
 - msg_cont - pole z treścią wiadomości zaszyfrowaną kluczem do AES. string
+
 ### online-list
 listowanie użytkowników online
 ```json
 {
-  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "timestamp":"2025-04-12T16:17:07+02:00",
   "command": "online-list",
   "payload": {}
 }
@@ -158,20 +159,120 @@ listowanie użytkowników online
 komenda pozwalająca na pobranie wiadomości [TODO]
 ```json
 {
-  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "timestamp":"2025-04-12T16:17:07+02:00",
   "command": "sync",
   "payload": {
     "from": "2025-04-10T16:20:47+02:00",
     "to": "2025-04-12T16:17:07+02:00",
+    "participants": ["user1"]
   }
 }
 ```
-- from - przediał od kied dla wiadomości. DateTime UTC ISO 8601
-- to - przedział do kied dla wiadomości. DateTime UTC ISO 8601
+- from - przediał od kied dla wiadomości. String. DateTime UTC ISO 8601
+- to - przedział do kied dla wiadomości. String. DateTime UTC ISO 8601
+- participants - użytkownicy uczestniczący w konwersacji, bez podawania nadawcy requesta. Arr of str.
+
+UWAGA! Zaleca się mieć na uwadze duży rozmiar odpowiedzi, przy wykonywaniu zapytania  
+UWAGA! Powinno się ustawić jak najmniejszy możliwy zakres by zbytnio nie obciążyć serwera.
+
+
 
 ## Struktura odpowiedzi servera json
-Struktura odpowiedzi servera na zapytania klienta.
-[TODO]
+Struktura odpowiedzi servera na zapytania klienta.  
+Header zawiera pole timestamp w formacie UTC ISO 8601, 
+pole type odpowiadające za determinowanie rodzaju odpowiedz, 
+oraz pole response, zawierające charakterystyczne wartości dla każdego z typów.
+
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "type": "some_response",
+  "response": {
+    ...
+  }
+}
+```
+### error
+Odpowiedź zawierająca informacje na temat błędu który zaszedł. Na przykład o niepowodzeniu próbie rejestracji.
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "type": "error",
+  "response": {
+    "message": "generic error message"
+  }
+}
+```
+### ack
+Odpowiedź typu acknowledge, jest używana do potwierdzenia operacji, wychodzących od użytkownika. Na przykład o powodzeniu zalogowania.
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "type": "ack",
+  "response": {
+    "message": "generic ack message"
+  }
+}
+```
+### login
+Odpowiedź serwera na [request logowania](https://github.com/Ochrona-Systemow-Operacyjnych-Grupa-2/notatka/tree/main?tab=readme-ov-file#login)
+wysłany przez użytkownika. 
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "type": "login",
+  "response": {
+    "name": "some-username",
+    "token-enc": "encrypted-token-in-hex"
+  }
+}
+```
+Pola reprezentują:
+- name - powtórzona nazwa użytkownika.
+- token-enc - losowy token, wygenerowany przez serwer, a następnie zaszyfowany za pomocą klucza publicznego użytkownika.
+
+### sync
+Odpowiedź, zawierająca zrequestowane wiadomości od urzytkownika.
+```json
+{
+  "timestamp": "2025-04-12T16:17:07+02:00",
+  "type": "sync",
+  "response": {
+    "from": "2025-04-10T16:20:47+02:00",
+    "to": "2025-04-12T16:17:07+02:00",
+    "participants": ["user1"],
+    "payloads": [
+      {
+        "timestamp": "2025-04-10T16:20:47+02:00",
+        "from": "sender",
+        "to": ["receiver"],
+        "aes": "aes-key",
+        "msg_cont": "encrypted-msg"
+      },
+      {
+        "timestamp": "2025-04-10T16:21:39+02:00",
+        "from": "receiver",
+        "to": ["sender"],
+        "aes": "aes-key",
+        "msg_cont": "encrypted-msg"
+      },
+      {
+        ...
+      }
+    ]
+  }
+}
+```
+Poza headerem, odpowiedź zawiera pola:
+- from - górny zakres wiadomości
+- to - dolny zakres wiadomości
+- participants - tablica nazw urzytkowników uczestniczących w rozmowie. (bez nazwy requestującego)
+- payloads - tablica zawierająca główną odpowiedź o danych polach:
+  - timestamp - data+czas odebrania wiadomości
+  - from - nadawca wiadomości
+  - to - tablica odbiorców wiadomości
+  - aes - zaszyfrowany klucz aes
+  - msg_cont - treść wiadomości zaszyfrowana kluczem aes
 
 ## Struktura baz danych na serverze
 bazy danych dotyczą przechowywania informacji o użytkownikach i wysłanych wiadomościach
