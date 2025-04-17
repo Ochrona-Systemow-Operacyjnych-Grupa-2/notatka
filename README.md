@@ -194,8 +194,6 @@ baza danych zawierająca wiadomości
 - msg - zaszyfrowana treść wiadomości (za pomocą AES)
 - aes - klucz AES do wiadmości zaszyfrowany przez RSA
 
-**NOTATKA** - przemyśleć czy w timestampie powinno się używać daty wysłania wiadomości czy odebrania.
-
 ### użytkownicy
 baza danych zawierająca informacje o użytkownikach
 | users | 
