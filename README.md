@@ -140,6 +140,14 @@ weryfikacja tożsamości:
   }
 }
 ```
+### online-list
+```json
+{
+  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "command": "online-list",
+  "payload": {}
+}
+```
 
 Struktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
 - from - od którego użytkownika idzie wiadomość. string
