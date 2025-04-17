@@ -140,7 +140,13 @@ weryfikacja tożsamości:
   }
 }
 ```
+Struktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
+- from - od którego użytkownika idzie wiadomość. string
+- to - do którego użytkownika/ów idzie wiadomość. tablica użytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
+- aes - zaszyfrowany kluczem publiczym klucz do AES. string
+- msg_cont - pole z treścią wiadomości zaszyfrowaną kluczem do AES. string
 ### online-list
+listowanie użytkowników online
 ```json
 {
   "sender_timestamp":"2025-04-12T16:17:07+02:00",
@@ -148,12 +154,20 @@ weryfikacja tożsamości:
   "payload": {}
 }
 ```
-
-Struktura wysłania wiadomości, zawiera pola które zawiera baza oraz w polu payload dodatkowo:
-- from - od którego użytkownika idzie wiadomość. string
-- to - do którego użytkownika/ów idzie wiadomość. tablica użytkowników (w przypadku jednego odbiorcy zawiera w sobie tylko jednego odbiorcę)
-- aes - zaszyfrowany kluczem publiczym klucz do AES. string
-- msg_cont - pole z treścią wiadomości zaszyfrowaną kluczem do AES. string
+### sync
+komenda pozwalająca na pobranie wiadomości [TODO]
+```json
+{
+  "sender_timestamp":"2025-04-12T16:17:07+02:00",
+  "command": "sync",
+  "payload": {
+    "from": "2025-04-10T16:20:47+02:00",
+    "to": "2025-04-12T16:17:07+02:00",
+  }
+}
+```
+- from - przediał od kied dla wiadomości. DateTime UTC ISO 8601
+- to - przedział do kied dla wiadomości. DateTime UTC ISO 8601
 
 ## Struktura odpowiedzi servera json
 Struktura odpowiedzi servera na zapytania klienta.
