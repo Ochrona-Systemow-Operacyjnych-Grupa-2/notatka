@@ -274,6 +274,21 @@ Poza headerem, odpowiedź zawiera pola:
   - aes - zaszyfrowany klucz aes
   - msg_cont - treść wiadomości zaszyfrowana kluczem aes
 
+### online-list
+Lista użytkowników online
+```json
+{
+  "timestamp":"2025-04-12T16:17:07+02:00",
+  "type": "online-list",
+  "response": {
+    "users": [
+      {"name": "user1", "pub": "pub-key"},
+      {"name": "user2", "pub": "pub-key"}
+    ]
+  }
+}
+```
+
 ## Struktura baz danych na serverze
 bazy danych dotyczą przechowywania informacji o użytkownikach i wysłanych wiadomościach
 ### historia wiadomości
